@@ -1,0 +1,160 @@
+﻿<Page x:Class="BPBoard.BoardMain"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:bp="clr-namespace:BPBoard"
+      mc:Ignorable="d" 
+      d:DesignHeight="480" d:DesignWidth="640"
+      Title="BoardMain">
+
+    <Page.DataContext>
+        <bp:BoardMainViewModel/>
+    </Page.DataContext>
+
+    <Grid 
+        Name="mainGrid">
+        <!-- AutoGenerateColumns = False 는 ItemSource를 설정해도 자동으로 생성되지 않게한다 (Column의 이름을 Custom으로 지정함과 Width를 설정하기 위함)
+                IsReadOnly = true는 DataGrid를 수정하지 못하게..-->
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Width="{Binding ActualWidth, ElementName=mainGrid}" Height="{Binding ActualHeight, ElementName=mainGrid}" Panel.ZIndex="10" Background="#66000000" Visibility="{Binding IsLoadingVisibility}">
+
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Loading..." FontSize="36" FontWeight="Bold"/>
+
+        </Grid>
+
+        <DataGrid 
+            ItemsSource="{Binding List.Boards}"
+            AutoGenerateColumns="False"
+            IsReadOnly="true"
+            x:Name="dgBoard"
+            Margin="10,60,10,27"
+            IsSynchronizedWithCurrentItem="True"
+            SelectedIndex="{Binding SelectedIndex}" RowHeight="30" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserResizeColumns="False" BorderBrush="#33000000">
+
+            <DataGrid.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+            </DataGrid.Resources>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="40" Binding="{Binding PostNum}" Header="번호" CanUserSort="False">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Width="8*" Binding="{Binding Title}" Header="제목" CanUserSort="False">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Width="80" Binding="{Binding Date, StringFormat= \{0 : yyyy-MM-dd\} }" Header="날짜" CanUserSort="False">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Width="4*" Binding="{Binding Email}" Header="이메일" CanUserSort="False">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Width="4*" Binding="{Binding Author}" Header="글쓴이" CanUserSort="False">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel
+            Margin="4"
+            Grid.Row="1"
+            Orientation="Horizontal"
+            HorizontalAlignment="Center">
+
+            <Button                
+                Margin="4,0"
+                Content="&lt;&lt;"
+                Command="{Binding FirstCommand}"
+                IsEnabled="{Binding IsAvailablePrevious}"/>
+            <Button
+                Margin="4,0"
+                Content="&lt;"
+                Command="{Binding PreviousCommand}"
+                IsEnabled="{Binding IsAvailablePrevious}"/>
+            <StackPanel
+                x:Name="pageStackPanel"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <!--
+                <TextBlock
+                    Margin="10, 0, 10, 0"
+                    Text="{Binding PageArray.PageList[0].Num}"
+                    Visibility="{Binding PageArray.PageList[0].Visible}"/>
+                <TextBlock
+                    Margin="10, 0, 10, 0"
+                    Text="{Binding PageArray.PageList[1].Num}"
+                    Visibility="{Binding PageArray.PageList[1].Visible}"/>
+                <TextBlock
+                    Margin="10, 0, 10, 0"
+                    Text="{Binding PageArray.PageList[2].Num}"
+                    Visibility="{Binding PageArray.PageList[2].Visible}"/>
+                <TextBlock
+                    Margin="10, 0, 10, 0"
+                    Text="{Binding PageArray.PageList[3].Num}"
+                    Visibility="{Binding PageArray.PageList[3].Visible}"/>
+                <TextBlock
+                    Margin="10, 0, 10, 0"
+                    Text="{Binding PageArray.PageList[4].Num}"
+                    Visibility="{Binding PageArray.PageList[4].Visible}"/>
+                <TextBlock
+                    Margin="10, 0, 10, 0"
+                    Text="{Binding PageArray.PageList[5].Num}"
+                    Visibility="{Binding PageArray.PageList[5].Visible}"/>
+                <TextBlock
+                    Margin="10, 0, 10, 0"
+                    Text="{Binding PageArray.PageList[6].Num}"
+                    Visibility="{Binding PageArray.PageList[6].Visible}"/>
+                <TextBlock
+                    Margin="10, 0, 10, 0"
+                    Text="{Binding PageArray.PageList[7].Num}"
+                    Visibility="{Binding PageArray.PageList[7].Visible}"/>
+                <TextBlock
+                    Margin="10, 0, 10, 0"
+                    Text="{Binding PageArray.PageList[8].Num}"
+                    Visibility="{Binding PageArray.PageList[8].Visible}"/>
+                <TextBlock
+                    Margin="10, 0, 10, 0"
+                    Text="{Binding PageArray.PageList[9].Num}"
+                    Visibility="{Binding PageArray.PageList[9].Visible}"/>
+                -->
+            </StackPanel>
+            <Button
+                Margin="4,0"
+                Content="&gt;"
+                Command="{Binding NextCommand}"
+                IsEnabled="{Binding IsAvailableNext}"/>
+            <Button
+                Margin="4,0"
+                Content="&gt;&gt;"
+                Command="{Binding LastCommand}"
+                IsEnabled="{Binding IsAvailableNext}"/>
+        </StackPanel>
+    </Grid>
+</Page>
